@@ -231,7 +231,6 @@
         __weak typeof(self) _weakSelf = self;
         searchSuggestionVC.didSelectCellBlock = ^(UITableViewCell *didSelectCell) {
             __strong typeof(_weakSelf) _swSelf = _weakSelf;
-            _swSelf.searchBar.text = didSelectCell.textLabel.text;
             NSIndexPath *indexPath = [_swSelf.searchSuggestionVC.tableView indexPathForCell:didSelectCell];
             
             if ([_swSelf.delegate respondsToSelector:@selector(searchViewController:didSelectSearchSuggestionAtIndexPath:searchBar:)]) {
@@ -1080,6 +1079,9 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+	if ([self.delegate respondsToSelector:@selector(searchViewController:searchTextDidChange:searchText:)]) {
+		[self.delegate searchViewController:self searchTextDidChange:searchBar searchText:searchText];
+	}
     if (PYSearchResultShowModeEmbed == self.searchResultShowMode && self.showSearchResultWhenSearchTextChanged) {
         [self handleSearchResultShow];
         self.searchResultController.view.hidden = 0 == searchText.length;
@@ -1092,9 +1094,6 @@
         self.searchSuggestions = nil;
     }
     [self.view bringSubviewToFront:self.searchSuggestionVC.view];
-    if ([self.delegate respondsToSelector:@selector(searchViewController:searchTextDidChange:searchText:)]) {
-        [self.delegate searchViewController:self searchTextDidChange:searchBar searchText:searchText];
-    }
 }
 
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
