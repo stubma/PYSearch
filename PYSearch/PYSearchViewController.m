@@ -127,13 +127,17 @@
     self.cancelButtonWidth = cancelButton.py_width > self.cancelButtonWidth ? cancelButton.py_width : self.cancelButtonWidth;
     // Adapt the search bar layout problem in the navigation bar on iOS 11
     // More details : https://github.com/iphone5solo/PYSearch/issues/108
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 11.0) { // iOS 11
+    if (@available(iOS 11.0, *)) { // iOS 11
         UINavigationBar *navBar = self.navigationController.navigationBar;
         navBar.layoutMargins = UIEdgeInsetsZero;
         CGFloat space = 8;
         for (UIView *subview in navBar.subviews) {
             if ([NSStringFromClass(subview.class) containsString:@"ContentView"]) {
-                subview.layoutMargins = UIEdgeInsetsMake(0, space, 0, space); // Fix cancel button width is modified
+                if(@available(iOS 13.0, *)) {
+                    // iOS 13 can not set layoutMargins, so skip
+                } else {
+                    subview.layoutMargins = UIEdgeInsetsMake(0, space, 0, space); // Fix cancel button width is modified
+                }
                 break;
             }
         }
